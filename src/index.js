@@ -1,7 +1,12 @@
 function createStore (state, stateChanger) {
+    const listeners = []
+    const subscribe = (listener) => listeners.push(listener)
     const getState = () => state
-    const dispatch = (action) => stateChanger(state, action)
-    return { getState, dispatch }
+    const dispatch = (action) => {
+      stateChanger(state, action)
+      listeners.forEach((listener) => listener())
+    }
+    return { getState, dispatch, subscribe }
   }
 
 let appState = {
@@ -46,9 +51,10 @@ let appState = {
     contentDOM.style.color = content.color
   }
   
-  const store = createStore(appState, stateChanger)
-  
-  renderApp(store.getState()) // 首次渲染页面
-  store.dispatch({ type: 'UPDATE_TITLE_TEXT', text: '《React.js 小书》' }) // 修改标题文本
-  store.dispatch({ type: 'UPDATE_TITLE_COLOR', color: 'blue' }) // 修改标题颜色
-  renderApp(store.getState()) // 把新的数据渲染到页面上
+const store = createStore(appState, stateChanger)
+store.subscribe(() => renderApp(store.getState()))
+
+renderApp(store.getState()) // 首次渲染页面
+store.dispatch({ type: 'UPDATE_TITLE_TEXT', text: '《React.js 小书》' }) // 修改标题文本
+store.dispatch({ type: 'UPDATE_TITLE_COLOR', color: 'blue' }) // 修改标题颜色
+// ...后面不管如何 store.dispatch，都不需要重新调用 renderApp
