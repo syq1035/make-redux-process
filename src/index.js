@@ -1,3 +1,9 @@
+function createStore (state, stateChanger) {
+    const getState = () => state
+    const dispatch = (action) => stateChanger(state, action)
+    return { getState, dispatch }
+  }
+
 let appState = {
     title: {
       text: 'React.js 小书',
@@ -9,19 +15,20 @@ let appState = {
     }
   }
   
-  function dispatch (action) {
+  function stateChanger (state, action) {
     switch (action.type) {
       case 'UPDATE_TITLE_TEXT':
-        appState.title.text = action.text
+        state.title.text = action.text
         break
       case 'UPDATE_TITLE_COLOR':
-        appState.title.color = action.color
+        state.title.color = action.color
         break
       default:
         break
     }
   }
   
+
   function renderApp (appState) {
     renderTitle(appState.title)
     renderContent(appState.content)
@@ -39,7 +46,9 @@ let appState = {
     contentDOM.style.color = content.color
   }
   
-  renderApp(appState) // 首次渲染页面
-  dispatch({ type: 'UPDATE_TITLE_TEXT', text: '《React.js 小书》' }) // 修改标题文本
-  dispatch({ type: 'UPDATE_TITLE_COLOR', color: 'blue' }) // 修改标题颜色
-  renderApp(appState) // 把新的数据渲染到页面上
+  const store = createStore(appState, stateChanger)
+  
+  renderApp(store.getState()) // 首次渲染页面
+  store.dispatch({ type: 'UPDATE_TITLE_TEXT', text: '《React.js 小书》' }) // 修改标题文本
+  store.dispatch({ type: 'UPDATE_TITLE_COLOR', color: 'blue' }) // 修改标题颜色
+  renderApp(store.getState()) // 把新的数据渲染到页面上
