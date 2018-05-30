@@ -10,7 +10,7 @@
 
 createStore 现在可以直接拿来用了，套路就是：
 
-// 定一个 reducer
+```// 定一个 reducer
 function reducer (state, action) {
   /* 初始化 state 和 switch case */
 }
@@ -26,3 +26,4 @@ renderApp(store.getState())
 
 // 后面可以随意 dispatch 了，页面自动更新
 store.dispatch(...)
+```
